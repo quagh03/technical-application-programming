@@ -1,5 +1,8 @@
 import os
 
+from entities.ManageEmployee import ManageEmployee
+
+
 def display_menu():
     print("******************************************************************************************")
     print("*                        Nhom 3 | 66PM3 | Quản Lý Nhân Sự Cửa Hàng                       *")
@@ -13,16 +16,20 @@ def display_menu():
     print("* 8. Sắp xếp danh sách n nhân viên có doanh thu cao nhất                                 *")
     print("* 9. Thống kê danh sách nhân viên có mức lương thấp hoặc cao hơn mức lương trung bình    *")
     print("* 10. Hiển thị nhóm có tổng doanh thu cao nhất                                           *")
-    print("* 11. Thoát chương trình                                                                 *")
+    print("* 11. Hiển thị danh sách tất cả nhân viên                                                *")
+    print("* 12. Thoát chương trình                                                                 *")
     print("******************************************************************************************")
 
 
 def main():
+    manage_employee = ManageEmployee()
+
     while True:
         display_menu()
         choice = input("Nhập lựa chọn của bạn: ")
 
         if choice == "1":
+            manage_employee.add_employee()
             pass
         elif choice == "2":
             # Sửa thông tin nhân viên
@@ -52,6 +59,9 @@ def main():
             # Hiển thị nhóm có tổng doanh thu cao nhất
             pass
         elif choice == "11":
+            manage_employee.list_employees()
+            pass
+        elif choice == "12":
             print("Chương trình kết thúc.")
             break
         else:
