@@ -7,6 +7,7 @@ class ManageEmployee:
         self.employees = []
         self.numberOfEmp = 1
         self.deletedBackup = []
+        self.groups = []
 
     def add_employee(self):
         while True:
@@ -143,6 +144,9 @@ class ManageEmployee:
             print(emp.__dict__)
 
     def display_salary_statistics(self, option):
+        if not self.employees:  # Kiểm tra nếu danh sách nhân viên rỗng
+            print("Không có dữ liệu nhân viên.")
+            return
         salaries = [emp.calculate_salary() for emp in self.employees]
         avg_salary = sum(salaries) / len(salaries)
         if option == "high":
@@ -153,6 +157,15 @@ class ManageEmployee:
             below_average_salaries = [emp for emp in self.employees if emp.calculate_salary() < avg_salary]
             for emp in below_average_salaries:
                 print(emp.__dict__)
+        elif option == "all":
+            below_average_salaries = [emp for emp in self.employees if emp.calculate_salary() < avg_salary]
+            above_average_salaries = [emp for emp in self.employees if emp.calculate_salary() > avg_salary]
+            print("\nBelow Average Salaries:")
+            for emp in below_average_salaries:
+                print(emp.__dict__)
+            print("\nAbove Average Salaries:")
+            for emp in above_average_salaries:
+                print(emp.__dict__)
 
     def display_highest_revenue_group(self):
         groups = {}
@@ -162,5 +175,26 @@ class ManageEmployee:
                     groups[emp.management_group] += emp.total_group_revenue
                 else:
                     groups[emp.management_group] = emp.total_group_revenue
-        highest_group = max(groups, key=groups.get)
-        print(f"The group with the highest total revenue is: {highest_group}")
+
+        if not groups:
+            print("Không có dữ liệu về nhóm nào.")
+        else:
+            if all(revenue <= 0 for revenue in groups.values()):
+                max_group = "newGroup"
+                max_revenue = float('-inf')
+                for emp in self.employees:
+                    if isinstance(emp, Manager):
+                        if emp.total_group_revenue > max_revenue:
+                            max_group = emp.management_group
+                            max_revenue = emp.total_group_revenue
+                print(f"Nhóm cao nhất đã được cập nhật doanh thu về âm: {max_group}.")
+                print("Danh sách đã được cập nhật.")
+                new_group = {
+                    'name': max_group,
+                    'total_revenue': max_revenue
+                }
+                self.groups.append(new_group)
+                
+            else:
+                highest_group = max(groups, key=groups.get)
+                print(f"Nhóm có tổng doanh thu cao nhất là: {highest_group}, Tổng doanh thu: {groups[highest_group]}")
