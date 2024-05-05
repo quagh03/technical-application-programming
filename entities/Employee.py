@@ -5,3 +5,6 @@ class Employee:
         self.phone_number = phone_number
         self.email = email
         self.position = position
+
+    def calculate_salary(self):
+        raise NotImplementedError("Implement hàm này để tính lương")

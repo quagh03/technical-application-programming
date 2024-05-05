@@ -9,3 +9,6 @@ class Manager(Employee):
         self.management_group = management_group
         self.num_employees_in_group = num_employees_in_group
         self.total_group_revenue = total_group_revenue
+
+    def calculate_salary(self):
+        return 8000000 + (0.01 * self.total_group_revenue) + self.num_employees_in_group * 250000
