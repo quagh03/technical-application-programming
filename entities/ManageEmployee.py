@@ -391,13 +391,6 @@ class ManageEmployee:
     def calculate_total_salary(self):
         total_salary = 0
         for emp in self.employees:
-            # if isinstance(emp, Manager):
-            #     total_salary += 8000000 + (0.01 * emp.total_group_revenue) + emp.num_employees_in_group * 250000
-            # elif isinstance(emp, Salesman):
-            #     if emp.months_worked < 6:
-            #         total_salary += 0.03 * emp.revenue + 2200000
-            #     else:
-            #         total_salary += 0.045 * emp.revenue + 3500000
             total_salary += emp.calculate_salary()
         return total_salary
 
@@ -406,6 +399,44 @@ class ManageEmployee:
         top_salespeople = sorted(salespeople, key=lambda x: x.revenue, reverse=True)[:n]
         for emp in top_salespeople:
             print(emp.__dict__)
+
+    def display_worst_salespeople(self, n):
+        salespeople = [emp for emp in self.employees if isinstance(emp, Salesman)]
+        worst_salespeople = sorted(salespeople, key=lambda x: x.revenue)[:n]
+        for emp in worst_salespeople:
+            print(emp.__dict__)
+
+    def display_lowest_revenue_group(self):
+        groups = {}
+        for emp in self.employees:
+            if isinstance(emp, Manager):
+                if emp.management_group in groups:
+                    groups[emp.management_group] += emp.total_group_revenue
+                else:
+                    groups[emp.management_group] = emp.total_group_revenue
+
+        if not groups:
+            print("Không có dữ liệu về nhóm nào.")
+        else:
+            if all(revenue <= 0 for revenue in groups.values()):
+                min_group = "newGroup"
+                min_revenue = float('inf')
+                for emp in self.employees:
+                    if isinstance(emp, Manager):
+                        if emp.total_group_revenue < min_revenue:
+                            min_group = emp.management_group
+                            min_revenue = emp.total_group_revenue
+                print(f"Nhóm thấp nhất đã được cập nhật doanh thu về âm: {min_group}.")
+                print("Danh sách đã được cập nhật.")
+                new_group = {
+                    'name': min_group,
+                    'total_revenue': min_revenue
+                }
+                self.groups.append(new_group)
+
+            else:
+                lowest_group = min(groups, key=groups.get)  # Change to min
+                print(f"Nhóm có tổng doanh thu thấp nhất là: {lowest_group}, Tổng doanh thu: {groups[lowest_group]}")
 
     def display_salary_statistics(self, option):
         if not self.employees:

@@ -17,7 +17,9 @@ def display_menu():
     print("* 9. Thống kê danh sách nhân viên có mức lương thấp hoặc cao hơn mức lương trung bình    *")
     print("* 10. Hiển thị nhóm có tổng doanh thu cao nhất                                           *")
     print("* 11. Hiển thị danh sách tất cả nhân viên                                                *")
-    print("* 12. Thoát chương trình                                                                 *")
+    print("* 12. Thống kê n nhân viên doanh thu thấp nhất                                           *")
+    print("* 13. Hiển thị nhóm có tổng doanh thu thấp nhất                                          *")
+    print("* 14. Thoát chương trình                                                                 *")
     print("******************************************************************************************")
 
 
@@ -97,7 +99,7 @@ def main():
                 print("Số lượng nhân viên yêu cầu hiển thị vượt quá tổng số nhân viên. Hiển thị tất cả nhân viên có "
                       "doanh thu cao nhất.")
                 n = len(manage_employee.employees)
-            
+
             manage_employee.display_top_salespeople(n)
             pass
         elif choice == "9":
@@ -105,7 +107,7 @@ def main():
             print("1. Lương thấp hơn mức lương trung bình (low)")
             print("2. Lương cao hơn mức lương trung bình (high)")
             print("3. Tất cả (all)")
-            
+
             option = input("Nhập từ khóa low, high, all: ")
             if option.lower() not in ['low', 'high', 'all']:
                 print("Lựa chọn không hợp lệ. Vui lòng chọn 'low', 'high' hoặc 'all'.")
@@ -119,11 +121,34 @@ def main():
             manage_employee.list_employees()
             pass
         elif choice == "12":
+            while True:
+                try:
+                    n = int(input("Nhập số lượng nhân viên có doanh thu thấp nhất bạn muốn hiển thị: "))
+                    if n <= 0:
+                        print("Số lượng nhân viên cần hiển thị phải lớn hơn 0. Vui lòng nhập lại.")
+                    else:
+                        break
+                except ValueError:
+                    print("Vui lòng nhập một số nguyên.")
+
+            if n > len(manage_employee.employees):
+                print("Số lượng nhân viên yêu cầu hiển thị vượt quá tổng số nhân viên. Hiển thị tất cả nhân viên có "
+                      "doanh thu thấp nhất.")
+                n = len(manage_employee.employees)
+            manage_employee.display_worst_salespeople(n)
+            pass
+        elif choice == "13":
+            manage_employee.display_lowest_revenue_group()
+            pass
+        elif choice == "14":
             print("Chương trình kết thúc.")
             break
         else:
             os.system('cls')
             print("Lựa chọn không hợp lệ. Vui lòng chọn lại.")
+
+    print("* 12. Thống kê n nhân viên doanh thu thấp nhất                                           *")
+    print("* 13. Hiển thị nhóm có tổng doanh thu thấp nhất                                          *")
 
 
 if __name__ == "__main__":
