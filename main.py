@@ -40,7 +40,6 @@ def main():
                 manage_employee.list_employees()
                 employee_id = int(input("Nhập mã số nhân viên muốn sửa thông tin: "))
                 manage_employee.edit_employee(employee_id)
-                print("Danh sách nhân viên sau khi sửa")
                 manage_employee.list_employees()
             input("Nhấn Enter để trở về menu!")
         elif choice == "3":
