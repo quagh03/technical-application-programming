@@ -1,3 +1,5 @@
+import re
+
 from entities.Manager import Manager
 from entities.Salesman import Salesman
 
@@ -9,16 +11,43 @@ class ManageEmployee:
         self.deletedBackup = []
         self.groups = []
 
+    def validate_phone_number(self, phone_number):
+        pattern = r'^[0-9]{10}$'
+        return re.match(pattern, phone_number) is not None
+    def validate_email(self, email):
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return re.match(pattern, email) is not None
+    def is_integer(self, input_str):
+        try:
+            num = int(input_str)
+            if num < 0:
+                print("Số phải lớn hơn 0. Vui lòng nhập lại.")
+                return False
+            return True
+        except ValueError:
+            return False
+
+    def is_float(self, input_str):
+        try:
+            num = float(input_str)
+            if num <= 0:
+                print("Số phải lớn hơn 0. Vui lòng nhập lại.")
+                return False
+            return True
+        except ValueError:
+            return False
     def add_employee(self):
         while True:
-            num_employees = int(input("Nhập số lượng nhân viên muốn thêm: "))
-            if num_employees <= 0:
-                print("Số lượng nhân viên phải lớn hơn 0. Vui lòng nhập lại.")
-            else:
+            input_str = input("Nhập số lượng nhân viên muốn thêm: ")
+            if self.is_integer(input_str):
+                num_employees = int(input_str)
                 break
+            else:
+                print("Vui lòng nhập lại một số nguyên dương.")
+
         for _ in range(num_employees):
             while True:
-                print("Chọn loại nhân viên:")
+                print("Chọn chức vụ nhân viên:")
                 print("1. Quản lý")
                 print("2. Nhân viên bán hàng")
                 employee_type = input("Chọn loại nhân viên (1/2): ")
@@ -30,34 +59,184 @@ class ManageEmployee:
                     break
 
             employee_id = self.numberOfEmp
-            name = input("Nhập tên nhân viên: ")
-            phone_number = input("Nhập số điện thoại: ")
-            email = input("Nhập email: ")
+            name = input("Nhập tên: ")
+            while True:
+                phone_number = input("Nhập số điện thoại: ")
+                if not self.validate_phone_number(phone_number):
+                    print("Số điện thoại không hợp lệ. Vui lòng nhập lại.")
+                    continue
+                break
+
+            while True:
+                email = input("Nhập email: ")
+                if not self.validate_email(email):
+                    print("Email không hợp lệ. Vui lòng nhập lại.")
+                    continue
+                break
 
             if employee_type == '1':
-                management_group = input("Nhập nhóm quản lý: ")
-                num_employees_in_group = int(input("Nhập số lượng nhân viên trong nhóm: "))
-                total_group_revenue = float(input("Nhập tổng doanh thu của nhóm: "))
+                while True:
+                    management_group = input("Nhập nhóm quản lý: ")
+                    if self.is_integer(management_group):
+                        management_group = int(management_group)
+                        break
+                    else:
+                        print("Vui lòng nhập lại một số nguyên dương!")
+                while True:
+                    num_employees_in_group = input("Nhập số lượng nhân viên trong nhóm: ")
+                    if self.is_integer(num_employees_in_group):
+                        num_employees_in_group = int(num_employees_in_group)
+                        break
+                    else:
+                        print("Vui lòng nhập lại một số nguyên dương!")
+                while True:
+                    total_group_revenue = input("Nhập tổng doanh thu của nhóm: ")
+                    if self.is_float(total_group_revenue):
+                        total_group_revenue = float(total_group_revenue)
+                        break
+                    else:
+                        print("Vui lòng nhập lại một số hoợp lệ!")
                 employee = Manager(employee_id, name, phone_number, email, management_group,
                                    num_employees_in_group, total_group_revenue)
                 self.employees.append(employee)
                 self.numberOfEmp += 1
             elif employee_type == '2':
-                revenue = float(input("Nhập doanh số bán hàng: "))
-                months_worked = int(input("Nhập số tháng làm việc: "))
+                while True:
+                    revenue = input("Nhập doanh số bán hàng: ")
+                    if self.is_float(revenue):
+                        revenue = float(revenue)
+                        break
+                    else:
+                        print("Vui lòng nhập lại một số hoợp lệ!")
+                while True:
+                    months_worked = input("Nhập số tháng làm việc: ")
+                    if self.is_integer(months_worked):
+                        months_worked = int(months_worked)
+                        break
+                    else:
+                        print("Vui lòng nhập lại một số nguyên dương!")
                 employee = Salesman(employee_id, name, phone_number, email, revenue, months_worked)
                 self.employees.append(employee)
                 self.numberOfEmp += 1
             else:
                 print("Lựa chọn không hợp lệ. Vui lòng chọn lại!")
                 continue
-
             print(f"Thêm mới nhân viên {employee.employee_id} thành công!")
 
+    def edit_employee(self, employee_id):
+        if self.is_empty_employee_list():
+            return
+        for emp in self.employees:
+            if emp.employee_id == employee_id:
+                print("Chọn thông tin bạn muốn sửa:")
+                print("1. Tên")
+                print("2. Số điện thoại")
+                print("3. Email")
+                print("4. Chức vụ")
+                if isinstance(emp, Manager):
+                    print("5. Nhóm quản lý")
+                    print("6. Số lượng nhân viên trong nhóm")
+                    print("7. Tổng doanh thu của nhóm")
+                elif isinstance(emp, Salesman):
+                    print("5. Doanh số bán hàng")
+                    print("6. Số tháng làm việc")
+                if emp.employee_id == employee_id:
+                    if isinstance(emp, Manager):
+                        choice = input("Chọn thông tin bạn muốn sửa (0-7): ")
+                    else:
+                        choice = input("Chọn thông tin bạn muốn sửa (0-6): ")
+                if choice == "1":
+                    new_name = input("Nhập tên mới: ")
+                    emp.name = new_name
+                    print("Tên đã được cập nhật thành công!")
+                elif choice == "2":
+                    while True:
+                        new_email = input("Nhập email mới: ")
+                        if not self.validate_email(new_email):
+                            print("Email không hợp lệ. Vui lòng nhập lại.")
+                            continue
+                        emp.email = new_email
+                        print("Email đã được cập nhật thành công!")
+                        break
+                elif choice == "3":
+                    while True:
+                        new_phone_number = input("Nhập số điện thoại mới: ")
+                        if not self.validate_phone_number(new_phone_number):
+                            print("Số điện thoại không hợp lệ. Vui lòng nhập lại.")
+                            continue
+                        emp.phone_number = new_phone_number
+                        print("Số điện thoại đã được cập nhật thành công!")
+                        break
+                elif choice == "4":
+                    print("Chức vụ mới: ")
+                    print("1. Quản lý")
+                    print("2. Nhân viên bán hàng")
+                    new_position = input("Chọn (1/2): ")
+                    if new_position not in ['1', '2']:
+                        print("Lựa chọn không hợp lệ. Vui lòng chọn lại!")
+                        continue
+                    else:
+                        emp.position = "Quản lý" if new_position == '1' else "Nhân viên bán hàng"
+                        print("Chức vụ đã được cập nhật thành công!")
+                        break
+                elif choice == "5" and isinstance(emp, Manager):
+                    while True:
+                        new_management_group = input("Nhập mới nhóm quản lý: ")
+                        if self.is_integer(new_management_group):
+                            new_management_group = int(new_management_group)
+                            break
+                        else:
+                            print("Vui lòng nhập lại một số nguyên dương.")
+                    emp.management_group = new_management_group
+                    print("Nhóm quản lý đã được cập nhật thành công!")
+                elif choice == "6" and isinstance(emp, Manager):
+                    while True:
+                        new_num_employees_in_group = input("Nhập mới số lượng nhân viên: ")
+                        if self.is_integer(new_num_employees_in_group):
+                            new_num_employees_in_group = int(new_num_employees_in_group)
+                            break
+                        else:
+                            print("Vui lòng nhập lại một số nguyên dương.")
+                    emp.num_employees_in_group = new_num_employees_in_group
+                    print("Số lượng nhân viên trong nhóm đã được cập nhật thành công!")
+                elif choice == "7" and isinstance(emp, Manager):
+                    while True:
+                        new_total_group_revenue = input("Nhập mới tổng doanh thu của nhóm: ")
+                        if self.is_float(new_total_group_revenue):
+                            new_total_group_revenue = float(new_total_group_revenue)
+                            break
+                        else:
+                            print("Vui lòng nhập lại một số hoợp lệ!")
+                    emp.total_group_revenue = new_total_group_revenue
+                    print("Tổng doanh thu của nhóm đã được cập nhật thành công!")
+                elif choice == "5" and isinstance(emp, Salesman):
+                    while True:
+                        new_revenue = input("Nhập mới doanh số bán hàng: ")
+                        if self.is_float(new_revenue):
+                            new_revenue = float(new_revenue)
+                            break
+                        else:
+                            print("Vui lòng nhập lại một số hoợp lệ!")
+                    emp.revenue = new_revenue
+                    print("Doanh số bán hàng đã được cập nhật thành công!")
+                elif choice == "6" and isinstance(emp, Salesman):
+                    while True:
+                        new_months_worked = input("Nhập mới số tháng làm việc: ")
+                        if self.is_integer(new_months_worked):
+                            new_months_worked = int(new_months_worked)
+                            break
+                        else:
+                            print("Vui lòng nhập lại một số nguyên dương.")
+                    emp.months_worked = new_months_worked
+                    print("Số tháng làm việc đã được cập nhật thành công!")
+                else:
+                    print("Lựa chọn không hợp lệ. Vui lòng thử lại!")
+                return
+        print(f"Không tìm thấy nhân viên có mã số {employee_id}!")
     def list_employees(self):
         if not self.employees:
-            print("Danh sách nhân viên trống.")
-            return
+            print("Danh sách nhân viên trống. Hãy thêm mới!")
+            return True
 
         print("Danh sách nhân viên:")
         print("-------------------------------------------------------------------------------------------------------")
@@ -65,42 +244,105 @@ class ManageEmployee:
             "Mã NV", "Tên", "Số điện thoại", "Email", "Chức vụ"))
         print("-------------------------------------------------------------------------------------------------------")
         for employee in self.employees:
-            print("| {:<15} | {:<20} | {:<15} | {:<25} | {:<25} |".format(
-                employee.employee_id, employee.name, employee.phone_number, employee.email, employee.position))
+            if employee not in self.deletedBackup:
+                print("| {:<15} | {:<20} | {:<15} | {:<25} | {:<25} |".format(
+                    employee.employee_id, employee.name, employee.phone_number, employee.email, employee.position))
         print("-------------------------------------------------------------------------------------------------------")
-
     def is_empty_employee_list(self):
         if not self.employees:
             print("Danh sách nhân viên trống. Bạn phải thêm mới nhân viên trước!")
             return True
         return False
 
-    def remove_employee(self, employee_id, backup=False):
+    def remove_employee(self, employee_id):
         if self.is_empty_employee_list():
             return
 
-        if employee_id in self.employees:
-            if backup:
-                self.deletedBackup.append(self.employees[employee_id])
-                print(f"Xóa có back up nhân viên {employee_id} thành công!")
-            del self.employees[employee_id]
-            print(f"Xóa thành công nhân viên {employee_id} !")
-        else:
-            print("Không tìm thấy nhân viên")
-
-    def search_employee(self, search_key):
-        if self.is_empty_employee_list():
-            return
-
-        found = False
-
+        found_employee = None
         for emp in self.employees:
-            if search_key in [emp.employee_id, emp.name]:
-                print(emp.__dict__)
-                found = True
+            if emp.employee_id == employee_id:
+                found_employee = emp
+                break
 
-        if not found:
-            print("Không tìm thấy nhân viên!")
+        if found_employee:
+            print(f"Bạn đang thực hiện trên nhân viên: Mã nhân viên: {found_employee.employee_id}, Tên nhân viên: {found_employee.name}, Chức vụ: {found_employee.position}")
+            choice = input("Bạn có muốn sao lưu thông tin nhân viên trước khi xóa? (y/n): (hoặc 'q' để thoát) ")
+            if choice.lower() == 'q':
+                print("Thoát khỏi chức năng xóa nhân viên.")
+                return
+            elif choice.lower() == 'y':
+                self.deletedBackup.append(found_employee)
+                print(f"Thao tác xóa và sao lưu thực hiện thành công!")
+            else:
+                confirm_delete = input("Bạn có chắc chắn muốn xóa nhân viên này? (y/n): (hoặc 'q' để thoát) ")
+                if confirm_delete.lower() == 'q':
+                    print("Thoát khỏi chức năng xóa nhân viên.")
+                    return
+                elif confirm_delete.lower() == 'y':
+                    self.employees.remove(found_employee)
+                    print(f"Thao tác xóa thực hiện thành công!")
+                else:
+                    print("Hủy bỏ xóa nhân viên.")
+        else:
+            print(f"Không tìm thấy nhân viên có mã số {employee_id}!")
+
+    def search_employee(self):
+        if self.is_empty_employee_list():
+            return
+
+        while True:
+            print("Chọn chức năng tìm kiếm:")
+            print("1. Tìm kiếm theo mã nhân viên")
+            print("2. Tìm kiếm theo tên nhân viên")
+            option = input("Chọn chức năng (1/2): ")
+
+            if option == "1":
+                search_key = input("Nhập mã nhân viên cần tìm kiếm: ")
+                found = False
+                for emp in self.employees:
+                    if str(emp.employee_id) == search_key:
+                        print("Thông tin nhân viên được tìm thấy:")
+                        print(f"Mã NV: {emp.employee_id}")
+                        print(f"Tên: {emp.name}")
+                        print(f"Số điện thoại: {emp.phone_number}")
+                        print(f"Email: {emp.email}")
+                        print(f"Chức vụ: {emp.position}")
+                        if isinstance(emp, Manager):
+                            print(f"Nhóm quản lý: {emp.management_group}")
+                            print(f"Số lượng nhân viên trong nhóm: {emp.num_employees_in_group}")
+                            print(f"Tổng doanh thu của nhóm: {emp.total_group_revenue}")
+                        elif isinstance(emp, Salesman):
+                            print(f"Doanh số bán hàng: {emp.revenue}")
+                            print(f"Số tháng làm việc: {emp.months_worked}")
+                        found = True
+                        break
+                if not found:
+                    print("Không tìm thấy nhân viên có mã số", search_key)
+                break
+            elif option == "2":
+                search_key = input("Nhập tên nhân viên cần tìm kiếm: ").lower()
+                found = False
+                for emp in self.employees:
+                    if search_key in emp.name.lower():
+                        print("Thông tin nhân viên được tìm thấy:")
+                        print(f"Mã NV: {emp.employee_id}")
+                        print(f"Tên: {emp.name}")
+                        print(f"Số điện thoại: {emp.phone_number}")
+                        print(f"Email: {emp.email}")
+                        print(f"Chức vụ: {emp.position}")
+                        if isinstance(emp, Manager):
+                            print(f"Nhóm quản lý: {emp.management_group}")
+                            print(f"Số lượng nhân viên trong nhóm: {emp.num_employees_in_group}")
+                            print(f"Tổng doanh thu của nhóm: {emp.total_group_revenue}")
+                        elif isinstance(emp, Salesman):
+                            print(f"Doanh số bán hàng: {emp.revenue}")
+                            print(f"Số tháng làm việc: {emp.months_worked}")
+                        found = True
+                if not found:
+                    print("Không tìm thấy nhân viên có tên", search_key)
+                break
+            else:
+                print("Lựa chọn không hợp lệ. Vui lòng chọn lại.")
 
     def display_by_position(self, position):
         if self.is_empty_employee_list():

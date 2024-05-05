@@ -29,20 +29,36 @@ def main():
         choice = input("Nhập lựa chọn của bạn: ")
 
         if choice == "1":
+            # Thêm nhân viên
             manage_employee.add_employee()
-            pass
+            input("Nhấn Enter để trở về menu!")
         elif choice == "2":
             # Sửa thông tin nhân viên
-            pass
+            if manage_employee.is_empty_employee_list():
+                continue
+            else:
+                manage_employee.list_employees()
+                employee_id = int(input("Nhập mã số nhân viên muốn sửa thông tin: "))
+                manage_employee.edit_employee(employee_id)
+                print("Danh sách nhân viên sau khi sửa")
+                manage_employee.list_employees()
+            input("Nhấn Enter để trở về menu!")
         elif choice == "3":
             # Xóa nhân viên
-            pass
+            if manage_employee.is_empty_employee_list():
+                continue
+            else:
+                manage_employee.list_employees()
+                employee_id = int(input("Nhập mã số nhân viên muốn xóa: "))
+                manage_employee.remove_employee(employee_id)
+            input("Nhấn Enter để trở về menu!")
         elif choice == "4":
             # Tìm kiếm nhân viên
-            pass
+            manage_employee.search_employee()
+            input("Nhấn Enter để trở về menu!")
         elif choice == "5":
-            # Hiển thị danh sách nhân viên theo vị trí công việc
-            pass
+            manage_employee.list_employees()
+            input("Nhấn Enter để trở về menu!")
         elif choice == "6":
             # Tính tổng doanh thu và doanh thu trung bình của cửa hàng trong tháng hiện tại
             total_revenue = manage_employee.calculate_total_revenue()
