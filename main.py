@@ -98,9 +98,7 @@ def main():
                       "doanh thu cao nhất.")
                 n = len(manage_employee.employees)
             
-            top_salespeople = sorted(manage_employee.employees, key=lambda x: x.revenue, reverse=True)[:n]
-            for emp in top_salespeople:
-                print(emp.__dict__)
+            manage_employee.display_top_salespeople(n)
             pass
         elif choice == "9":
             print("Vui lòng chọn tùy chọn để thống kê:")
