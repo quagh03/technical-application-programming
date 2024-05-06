@@ -189,10 +189,11 @@ class ManageEmployee:
                         # print("Tên đã được cập nhật thành công!")
                         # break
                         while True:
-                            name = input("Nhập tên: ")
-                            if not self.validate_name(name):
+                            new_name = input("Nhập tên: ")
+                            if not self.validate_name(new_name):
                                 print("Tên không hợp lệ vui lòng nhập lại!")
                                 continue
+                            emp.name = new_name
                             break
                         break
                     elif choice == "2":
