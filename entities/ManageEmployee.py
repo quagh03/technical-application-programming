@@ -37,11 +37,20 @@ class ManageEmployee:
         except ValueError:
             return False
 
-    def validate_employee_id(self, employee_id):
-        employee_id_str = str(employee_id)
+    def validate_name(self, name):
+        if not name.strip() or not re.match(r"^[a-zA-Z\s_]*$", name):
+            return False
+        return True
+
+    def validate_employee_id(self, employee_id_str):
+        if not employee_id_str:
+            print("Mã số nhân viên không được để trống. Vui lòng nhập lại.")
+            return False
         if not employee_id_str.isdigit():
             print("Mã số nhân viên phải là một số nguyên. Vui lòng nhập lại.")
             return False
+
+        employee_id = int(employee_id_str)
         employee_found = False
         for emp in self.employees:
             if emp.employee_id == employee_id:
@@ -50,7 +59,6 @@ class ManageEmployee:
         if not employee_found:
             print(f"Không tìm thấy nhân viên có mã số {employee_id}. Vui lòng nhập lại.")
             return False
-
         return True
 
     def add_employee(self):
@@ -76,7 +84,14 @@ class ManageEmployee:
                     break
 
             employee_id = self.numberOfEmp
-            name = input("Nhập tên: ")
+
+            while True:
+                name = input("Nhập tên: ")
+                if not self.validate_name(name):
+                    print("Tên không hợp lệ vui lòng nhập lại!")
+                    continue
+                break
+
             while True:
                 phone_number = input("Nhập số điện thoại: ")
                 if not self.validate_phone_number(phone_number):
@@ -140,13 +155,14 @@ class ManageEmployee:
                 continue
             print(f"Thêm mới nhân viên {employee.employee_id} thành công!")
 
-    def edit_employee(self, employee_id):
+    def edit_employee(self, employee_id_str):
         while True:
-            if not self.validate_employee_id(employee_id):
-                employee_id = input("Nhập lại mã số nhân viên muốn sửa thông tin: ")
+            if not self.validate_employee_id(employee_id_str):
+                employee_id_str = input("Nhập lại mã số nhân viên muốn sửa thông tin: ")
+                continue
             else:
                 break
-
+        employee_id = int(employee_id_str)
         for emp in self.employees:
             if emp.employee_id == employee_id:
                 while True:
@@ -168,9 +184,16 @@ class ManageEmployee:
                         else:
                             choice = input("Chọn thông tin bạn muốn sửa (0-6): ")
                     if choice == "1":
-                        new_name = input("Nhập tên mới: ")
-                        emp.name = new_name
-                        print("Tên đã được cập nhật thành công!")
+                        # new_name = input("Nhập tên mới: ")
+                        # emp.name = new_name
+                        # print("Tên đã được cập nhật thành công!")
+                        # break
+                        while True:
+                            name = input("Nhập tên: ")
+                            if not self.validate_name(name):
+                                print("Tên không hợp lệ vui lòng nhập lại!")
+                                continue
+                            break
                         break
                     elif choice == "2":
                         while True:
