@@ -8,3 +8,8 @@ class Salesman(Employee):
         self.revenue = revenue
         self.months_worked = months_worked
 
+    def calculate_salary(self):
+        if self.months_worked < 6:
+            return 0.03 * self.revenue + 2200000
+        else:
+            return 0.045 * self.revenue + 3500000
